@@ -100,7 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <EmbeddedResource Include="Resources\recent_events.sql" />
+    <EmbeddedResource Include="Resources\filtered_events.sql" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
