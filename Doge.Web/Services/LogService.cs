@@ -53,9 +53,9 @@
         {
             var @event = new
             {
+                fields,
                 // shuffling to make sure it serializes as desired
-                tags = new { tag = tags },
-                fields
+                tags = new { tag = tags }
             };
 
             var json = JsonConvert.SerializeObject(@event);

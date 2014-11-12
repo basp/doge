@@ -8,6 +8,13 @@
         readonly LogService service = new LogService();
 
         [HttpGet]
+        [Route("api/log")]
+        public dynamic Search()
+        {
+            return this.service.Search();
+        }
+
+        [HttpGet]
         [Route("api/log/tag/{tag}")]
         public dynamic Search([FromUri] string tag)
         {

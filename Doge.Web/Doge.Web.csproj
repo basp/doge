@@ -107,7 +107,6 @@
     <Content Include="event.xml" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <EmbeddedResource Include="Resources\search2.sql" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
@@ -143,7 +142,6 @@
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\App\Test.cshtml" />
     <Content Include="Scripts\jquery-1.9.0.min.map" />
     <Content Include="Views\App\Index.cshtml" />
     <None Include="Web.Debug.config">

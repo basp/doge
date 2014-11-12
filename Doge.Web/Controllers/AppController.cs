@@ -1,5 +1,6 @@
 ﻿namespace Doge.Web.Controllers
 {
+    using Doge.Web.Services;
     using DotLiquid;
     using System.Configuration;
     using System.Web.Mvc;
@@ -11,29 +12,21 @@
 
         readonly QueryParser parser = new QueryParser();
 
+        readonly LogService service = new LogService();
+
         [HttpGet]
         public ActionResult Index()
         {
-            return this.View();
+            var recent = this.service.Search();
+            return this.View(recent);
         }
 
         [HttpGet]
-        public ActionResult Test(string q)
+        public ActionResult Search(string tag)
         {
-            var m = this.parser.Parse(q);
-            var d = new
-            {
-                predicates = m.Predicates,
-                count = 50
-            };
-
-            var t = Template.Parse(Utils.ReadEmbeddedString("Doge.Web.Resources.search.sql"));
-            var h = Hash.FromAnonymousObject(d);
-            var sql = t.Render(h);
-
-            this.ViewBag.sql = sql;
-
-            return this.View();
+            var tags = Utils.SplitTagString(tag);
+            var result = this.service.Search(tags);
+            return this.View("Index", result);
         }
     }
 }
