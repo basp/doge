@@ -1,12 +1,13 @@
 ﻿namespace Doge.Web.Controllers
 {
     using DotLiquid;
+    using System.Configuration;
     using System.Web.Mvc;
 
     public class AppController : Controller
     {
-        readonly string connectionString =
-            @"Data Source=PREDATOR\SQLEXPRESS;Initial Catalog=sandbox;Integrated Security=SSPI";
+        static readonly string connectionString =
+            ConfigurationManager.AppSettings.Get("connectionString");
 
         readonly QueryParser parser = new QueryParser();
 
@@ -21,9 +22,16 @@
         {
             var m = this.parser.Parse(q);
 
-            var t = Template.Parse(Utils.ReadEmbeddedString("Doge.Web.Resources.filtered_events.sql"));
-            var h = Hash.FromAnonymousObject(new { predicates = m.Predicates });
+            var d = new
+            {
+                predicates = m.Predicates,
+                count = 50
+            };
+
+            var t = Template.Parse(Utils.ReadEmbeddedString("Doge.Web.Resources.search.sql"));
+            var h = Hash.FromAnonymousObject(d);
             var sql = t.Render(h);
+
             this.ViewBag.sql = sql;
 
             return this.View();
