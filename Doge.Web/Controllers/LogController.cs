@@ -1,7 +1,6 @@
 ﻿namespace Doge.Web.Controllers
 {
     using Doge.Web.Services;
-    using System.Linq;
     using System.Web.Http;
 
     public class LogController : ApiController
@@ -12,16 +11,16 @@
         [Route("api/log/tag/{tag}")]
         public dynamic Search([FromUri] string tag)
         {
-            var tags = SplitTagString(tag);
+            var tags = Utils.SplitTagString(tag);
             var events = this.service.Search(tags);
-            return new { events };
+            return events;
         }
 
         [HttpPost]
         [Route("api/log/tag/{tag}")]
         public dynamic Log([FromUri] string tag, [FromBody] dynamic fields)
         {
-            var tags = SplitTagString(tag);
+            var tags = Utils.SplitTagString(tag);
             this.service.InsertEvent(fields, tags);
             return new { response = "ok" };
         }
@@ -32,13 +31,6 @@
         {
             this.service.InsertEvent(fields);
             return new { response = "ok" };
-        }
-
-        private static string[] SplitTagString(string tag)
-        {
-            return tag.Split(new[] { ',' })
-                .Select(x => x.Trim().Replace(' ', '_').Replace('.', '_'))
-                .ToArray();
         }
     }
 }

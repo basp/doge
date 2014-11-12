@@ -8,7 +8,9 @@
     using System.Configuration;
     using System.Data;
     using System.Data.SqlClient;
+    using System.Linq;
     using System.Xml;
+    using System.Xml.Linq;
 
     public class LogService
     {
@@ -27,10 +29,31 @@
             }
         }
 
+        public IEnumerable<LogEvent> Search(params string[] tags)
+        {
+            var source = Utils.ReadEmbeddedString("Doge.Web.Resources.search.sql");
+            var template = Template.Parse(source);
+            var data = new { tags };
+            var hash = Hash.FromAnonymousObject(data);
+            var sql = template.Render(hash);
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                return conn.Query(sql)
+                    .Select(x => new LogEvent
+                    {
+                        Id = x.id,
+                        Data = XDocument.Parse(x.data),
+                        LoggedAt = x.logged_at
+                    });
+            }
+        }
+
         private static string Serialize(dynamic fields, params string[] tags)
         {
             var @event = new
             {
+                // shuffling to make sure it serializes as desired
                 tags = new { tag = tags },
                 fields
             };
@@ -41,17 +64,6 @@
                 "event");
 
             return doc.OuterXml;
-        }
-
-        public IEnumerable<LogEvent> Search(params string[] tags)
-        {
-            var source = Utils.ReadEmbeddedString("Doge.Web.Resources.search.sql");
-            var template = Template.Parse(source);
-            var data = new { tags };
-            var hash = Hash.FromAnonymousObject(data);
-            var sql = template.Render(hash);
-
-            return new LogEvent[0];
         }
     }
 }
