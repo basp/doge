@@ -1,64 +1,44 @@
 ﻿namespace Doge.Web.Controllers
 {
-    using Dapper;
-    using Doge.Web.Models;
-    using Newtonsoft.Json;
-    using System.Collections.Generic;
-    using System.Configuration;
-    using System.Data;
-    using System.Data.SqlClient;
+    using Doge.Web.Services;
     using System.Linq;
     using System.Web.Http;
-    using System.Xml;
-    using System.Xml.Linq;
 
     public class LogController : ApiController
     {
-        static readonly string connectionString =
-            ConfigurationManager.AppSettings.Get("connectionString");
-      
+        readonly LogService service = new LogService();
+
+        [HttpGet]
+        [Route("api/log/tag/{tag}")]
+        public dynamic Search([FromUri] string tag)
+        {
+            var tags = SplitTagString(tag);
+            var events = this.service.Search(tags);
+            return new { events };
+        }
+
         [HttpPost]
         [Route("api/log/tag/{tag}")]
-        public dynamic Log([FromUri] string tag, [FromBody] dynamic @event)
+        public dynamic Log([FromUri] string tag, [FromBody] dynamic fields)
         {
-            var tags = tag.Split(new[] { ',' })
-                .Select(x => x.Trim().Replace(' ', '_').Replace('.', '_'))
-                .ToArray();
-
-            InsertEvent(@event, tags);
+            var tags = SplitTagString(tag);
+            this.service.InsertEvent(fields, tags);
             return new { response = "ok" };
         }
 
         [HttpPost]
         [Route("api/log")]
-        public dynamic Log([FromBody] dynamic @event)
+        public dynamic Log([FromBody] dynamic fields)
         {
-            InsertEvent(@event);
+            this.service.InsertEvent(fields);
             return new { response = "ok" };
         }
 
-        private void InsertEvent(dynamic @event, params string[] tags)
+        private static string[] SplitTagString(string tag)
         {
-            var t = new DataTable();
-            t.Columns.Add("tag");
-
-            foreach (var tag in tags)
-            {
-                var row = t.NewRow();
-                row["tag"] = tag;
-                t.Rows.Add(row);
-            }
-
-            var json = JsonConvert.DeserializeObject(@event);
-            var xml = ((XmlDocument)JsonConvert.DeserializeXmlNode(json, "fields")).OuterXml;
-
-            using (var conn = new SqlConnection(connectionString))
-            {
-                conn.Execute(
-                    "[doge].[log_event]",
-                    new { data = xml, tags = t },
-                    commandType: CommandType.StoredProcedure);
-            }
+            return tag.Split(new[] { ',' })
+                .Select(x => x.Trim().Replace(' ', '_').Replace('.', '_'))
+                .ToArray();
         }
     }
 }

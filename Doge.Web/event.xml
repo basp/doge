@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<event>
+  <tags>
+    <t>i3</t>
+    <t>script</t>
+  </tags>
+  <fields>
+    <error>
+      <message>Something went wrong</message>
+      <number>-20010202</number>
+    </error>
+    <call_id>30023123</call_id>
+    <i3_identity>4020002012</i3_identity>
+    <campaign_id>TEST</campaign_id>
+  </fields>
+</event>

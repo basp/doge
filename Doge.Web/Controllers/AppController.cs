@@ -21,7 +21,6 @@
         public ActionResult Test(string q)
         {
             var m = this.parser.Parse(q);
-
             var d = new
             {
                 predicates = m.Predicates,
