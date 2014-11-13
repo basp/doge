@@ -7,8 +7,20 @@
 
 <hr />
 
-@foreach (var e in Model)
-{
-    <strong>@e.LoggedAt</strong>
-    <pre>@e.Data</pre>
-}
+<div class="panel-group" id="events">
+    @foreach (var e in Model)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading" id="event-@e.Id">
+                <a class="collapsed" data-toggle="collapse" data-parent="#events" href="#collapse-@e.Id">
+                    <strong>@e.LoggedAt</strong>
+                </a>
+            </div>
+            <div id="collapse-@e.Id" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <pre>@e.Data</pre>
+                </div>
+            </div> 
+        </div>
+    }
+</div>
